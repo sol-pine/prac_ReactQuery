@@ -18,8 +18,13 @@ export function Posts() {
 
   // replace with useQuery
   // const data = [];
-  // useQuery(쿼리키(쿼리이름), 쿼리함수(쿼리 데이터 가져오는 방법, 데이터를 가져오는 비동기 함수))
-  const { data, isError, error, isLoading } = useQuery("posts", fetchPosts);
+  // useQuery
+  // (쿼리키(쿼리이름),
+  // 쿼리함수(쿼리 데이터 가져오는 방법, 데이터를 가져오는 비동기 함수)
+  // {데이터 만료 시간 (옵션, 밀리초 단위)})
+  const { data, isError, error, isLoading } = useQuery("posts", fetchPosts, {
+    staleTime: 2000,
+  });
 
   // isLoading 로딩 상태 처리
   // isFetching : 비동기 쿼리가 해결되지 않았음, 데이터를 가져오는 중
