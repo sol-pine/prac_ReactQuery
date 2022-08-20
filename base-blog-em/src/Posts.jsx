@@ -19,9 +19,22 @@ export function Posts() {
   // replace with useQuery
   // const data = [];
   // useQuery(쿼리키(쿼리이름), 쿼리함수(쿼리 데이터 가져오는 방법, 데이터를 가져오는 비동기 함수))
-  const { data } = useQuery("posts", fetchPosts);
-  if (!data) return <div />;
+  const { data, isError, error, isLoading } = useQuery("posts", fetchPosts);
 
+  // isLoading 로딩 상태 처리
+  // isFetching : 비동기 쿼리가 해결되지 않았음, 데이터를 가져오는 중
+  // isLoading : 캐시된 데이터가 없고 + isFetching
+  if (isLoading) return <h3>Loading...</h3>;
+  // isError 에러 상태 처리
+  // 에러가 나면 쿼리에서 기본 3번 재시도 후 에러 결정
+  if (isError)
+    return (
+      <>
+        <h3>Oops, something went wrong</h3>
+        {/* 에러 메시지 확인 가능 */}
+        <p>{error.toString()}</p>
+      </>
+    );
   return (
     <>
       <ul>
