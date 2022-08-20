@@ -46,9 +46,13 @@ export function Posts() {
   );
 
   // isLoading 로딩 상태 처리
-  // isFetching : 비동기 쿼리가 해결되지 않았음, 데이터를 가져오는 중
   // isLoading : 캐시된 데이터가 없고 + isFetching
   if (isLoading) return <h3>Loading...</h3>;
+
+  // isFetching : 비동기 쿼리가 해결되지 않았음, 데이터를 가져오는 중
+  // 데이터가 있든 없든(캐시데이터가 있어도) 로딩 인디케이터 나타냄
+  // if (isFetching) return <h3>Fetching in progress...</h3>;
+
   // isError 에러 상태 처리
   // 에러가 나면 쿼리에서 기본 3번 재시도 후 에러 결정
   if (isError)
