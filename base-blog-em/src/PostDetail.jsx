@@ -24,8 +24,10 @@ async function updatePost(postId) {
 }
 
 export function PostDetail({ post }) {
-  const { data, isLoading, isError, error } = useQuery("comments", () =>
-    fetchComments(post.id)
+  // 쿼리 키를 배열로 변경하면 쿼리 키를 의존성 배열로 인식 => 변화를 감지해 데이터를 업데이트
+  const { data, isLoading, isError, error } = useQuery(
+    ["comments", post.id],
+    () => fetchComments(post.id)
   );
   if (isLoading) return <h3>Loading!</h3>;
   if (isError)
