@@ -5,15 +5,15 @@ import { useQuery } from "react-query";
 import { PostDetail } from "./PostDetail";
 const maxPostPage = 10;
 
-async function fetchPosts() {
+async function fetchPosts(pageNum) {
   const response = await fetch(
-    "https://jsonplaceholder.typicode.com/posts?_limit=10&_page=0"
+    `https://jsonplaceholder.typicode.com/posts?_limit=10&_page=${pageNum}`
   );
   return response.json();
 }
 
 export function Posts() {
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
 
   // replace with useQuery
@@ -22,9 +22,13 @@ export function Posts() {
   // (쿼리키(쿼리이름),
   // 쿼리함수(쿼리 데이터 가져오는 방법, 데이터를 가져오는 비동기 함수)
   // {데이터 만료 시간 (옵션, 밀리초 단위)})
-  const { data, isError, error, isLoading } = useQuery("posts", fetchPosts, {
-    staleTime: 2000,
-  });
+  const { data, isError, error, isLoading } = useQuery(
+    ["posts", currentPage],
+    () => fetchPosts(currentPage),
+    {
+      staleTime: 2000,
+    }
+  );
 
   // isLoading 로딩 상태 처리
   // isFetching : 비동기 쿼리가 해결되지 않았음, 데이터를 가져오는 중
@@ -54,11 +58,21 @@ export function Posts() {
         ))}
       </ul>
       <div className="pages">
-        <button disabled onClick={() => {}}>
+        <button
+          disabled={currentPage <= 1}
+          onClick={() => {
+            setCurrentPage((previousValue) => previousValue - 1);
+          }}
+        >
           Previous page
         </button>
-        <span>Page {currentPage + 1}</span>
-        <button disabled onClick={() => {}}>
+        <span>Page {currentPage}</span>
+        <button
+          disabled={currentPage >= maxPostPage}
+          onClick={() => {
+            setCurrentPage((previousValue) => previousValue + 1);
+          }}
+        >
           Next page
         </button>
       </div>
