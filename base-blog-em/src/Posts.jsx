@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // useQuery : 서버에서 데이터를 fetch할 때 사용
-import { useQuery } from "react-query";
+// useQueryClient : QueryClient 사용 훅
+import { useQuery, useQueryClient } from "react-query";
 
 import { PostDetail } from "./PostDetail";
 const maxPostPage = 10;
@@ -16,6 +17,18 @@ export function Posts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
 
+  // prefetching
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (currentPage < maxPostPage) {
+      const nextPage = currentPage + 1;
+      queryClient.prefetchQuery(["posts", nextPage], () =>
+        fetchPosts(nextPage)
+      );
+    }
+  }, [currentPage, queryClient]);
+
   // replace with useQuery
   // const data = [];
   // useQuery
@@ -27,6 +40,8 @@ export function Posts() {
     () => fetchPosts(currentPage),
     {
       staleTime: 2000,
+      // 이전 페이지로 돌아갔을 때 캐시에 데이터가 남아있도록
+      keepPreviousData: true,
     }
   );
 
