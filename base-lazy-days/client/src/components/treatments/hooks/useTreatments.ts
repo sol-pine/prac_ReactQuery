@@ -12,9 +12,10 @@ async function getTreatments(): Promise<Treatment[]> {
 }
 
 export function useTreatments(): Treatment[] {
+  const fallback = [];
   // TODO: get data from server via useQuery
   // data destructuring
   // useQuery(쿼리키, 쿼리함수)
-  const { data } = useQuery(queryKeys.treatments, getTreatments);
+  const { data = fallback } = useQuery(queryKeys.treatments, getTreatments);
   return data;
 }
