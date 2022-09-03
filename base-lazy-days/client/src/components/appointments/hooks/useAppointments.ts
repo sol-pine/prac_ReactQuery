@@ -1,7 +1,7 @@
 // @ts-nocheck
 import dayjs from 'dayjs';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useQuery } from 'react-query';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 
 import { axiosInstance } from '../../../axiosInstance';
 import { queryKeys } from '../../../react-query/constants';
@@ -63,6 +63,18 @@ export function useAppointments(): UseAppointments {
   /** ****************** END 2: filter appointments  ******************** */
   /** ****************** START 3: useQuery  ***************************** */
   // useQuery call for appointments for the current monthYear
+
+  // pre-fetch
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    // monthYear 업데이트 될 때마다(버튼 클릭) month 증가
+    const nextMonthYear = getNewMonthYear(monthYear, 1);
+    // 다음 달 데이터를 캐시 데이터로 저장해 프리페칭
+    queryClient.prefetchQuery(
+      [queryKeys.appointments, monthYear.year, monthYear.month],
+      () => getAppointments(nextMonthYear.year, nextMonthYear.month),
+    );
+  }, [queryClient, monthYear]);
 
   // TODO: update with useQuery!
   // Notes:
