@@ -76,6 +76,12 @@ export function useAppointments(): UseAppointments {
   /** ****************** START 3: useQuery  ***************************** */
   // useQuery call for appointments for the current monthYear
 
+  const commonOptions = {
+    // staleTime 과 cacheTime 은 프리페칭에 적용되므로 공통으로 사용하기 위해 따로 분리
+    staleTime: 0, // 즉시 리페칭
+    cacheTime: 300000, // 기본 값 5분
+  };
+
   // pre-fetch
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -85,8 +91,9 @@ export function useAppointments(): UseAppointments {
     queryClient.prefetchQuery(
       [queryKeys.appointments, monthYear.year, monthYear.month],
       () => getAppointments(nextMonthYear.year, nextMonthYear.month),
+      commonOptions,
     );
-  }, [queryClient, monthYear]);
+  }, [queryClient, monthYear, commonOptions]);
 
   // TODO: update with useQuery!
   // Notes:
@@ -103,6 +110,11 @@ export function useAppointments(): UseAppointments {
     () => getAppointments(monthYear.year, monthYear.month),
     {
       select: showAll ? undefined : selectFn,
+      // 예약 데이터는 실시간으로 변동됨으로 re-fetch 옵션 따로 설정
+      ...commonOptions,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: true,
     },
   );
 
