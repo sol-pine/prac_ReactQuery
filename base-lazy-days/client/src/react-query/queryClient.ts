@@ -20,6 +20,12 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       onError: queryErrorHandler,
+      // re-fetch 옵션 전역으로 처리 (권장 안함 => 데이터 무효화 처리)
+      staleTime: 600000, // 10분
+      cacheTime: 900000, // 15분
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
     },
   },
 });
