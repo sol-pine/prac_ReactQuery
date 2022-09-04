@@ -1,6 +1,12 @@
 // @ts-nocheck
 import dayjs from 'dayjs';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
 import { axiosInstance } from '../../../axiosInstance';
@@ -60,6 +66,12 @@ export function useAppointments(): UseAppointments {
   //   appointments that the logged-in user has reserved (in white)
   const { user } = useUser();
 
+  // 얘약 가능 일자만 확인할 수 있도록 select 옵션을 이용해 데이터 필터링
+  // select는 pre-fetch 옵션이 아니어서 pre-fetch 데이터에는 추가 안됨
+  const selectFn = useCallback((data) => getAvailableAppointments(data, user), [
+    user,
+  ]);
+
   /** ****************** END 2: filter appointments  ******************** */
   /** ****************** START 3: useQuery  ***************************** */
   // useQuery call for appointments for the current monthYear
@@ -89,6 +101,9 @@ export function useAppointments(): UseAppointments {
     // 쿼리 키를 의존성 배열로 취급해 새로운 쿼리를 생성하고 새 데이터를 가져올 수 있게 처리
     [queryKeys.appointments, monthYear.year, monthYear.month],
     () => getAppointments(monthYear.year, monthYear.month),
+    {
+      select: showAll ? undefined : selectFn,
+    },
   );
 
   /** ****************** END 3: useQuery  ******************************* */
