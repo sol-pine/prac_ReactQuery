@@ -43,7 +43,8 @@ export function useReserveAppointment(): UseMutateFunction<
       // 데이터 업데이트 시, 새로고침 필요 없음
       // mutate 호출 => mutate의 onSuccess 핸들러가 쿼리 무효화 => 쿼리가 렌더중이면 Refetch 트리거
       onSuccess: () => {
-        // queryClient.invalidateQueries(무효화할쿼리키)
+        // queryClient.invalidateQueries(무효화할쿼리키 => Query Key Prefix)
+        // Query Key Prefix : 변이 실행 시, 모든 관련 쿼리 무효화
         queryClient.invalidateQueries([queryKeys.appointments]);
         toast({
           title: '예약이 완료되었습니다!',

@@ -60,7 +60,8 @@ export function useUser(): UseUser {
     // 유저가 로그아웃하면 캐시에 있는 유저 데이터 null로 무효화
     queryClient.setQueryData(queryKeys.user, null);
     // 유저가 로그아웃했을 때 본인의 예약 쿼리 데이터가 보이지 않도록 함
-    queryClient.removeQueries('user-appointments');
+    // queryClient.removeQueries([QueryKeyPrefix])
+    queryClient.removeQueries([queryKeys.appointments, queryKeys.user]);
   }
 
   return { user, updateUser, clearUser };
