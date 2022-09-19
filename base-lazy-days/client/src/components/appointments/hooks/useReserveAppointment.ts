@@ -19,6 +19,11 @@ async function setAppointmentUser(
   });
 }
 
+// useMutateFunction hook type
+// <TData (mutate 함수에서 반환된 데이터 타입(리턴 데이터가 없으면 void)) = unknown,
+// TError (에러 타입) = unknown,
+// TVariables (함수로 전달될 변수 타입) = void,
+// TContext (optimistic update rollback 서버 업데이트 전 미리 UI를 변경한 후, 롤백) = unknown>
 export function useReserveAppointment(): UseMutateFunction<
   void,
   unknown,
