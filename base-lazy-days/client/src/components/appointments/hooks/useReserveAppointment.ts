@@ -1,4 +1,4 @@
-import { useMutation, UseMutateFunction } from 'react-query';
+import { useMutation, UseMutateFunction, useQueryClient } from 'react-query';
 
 import { Appointment } from '../../../../../shared/types';
 import { axiosInstance } from '../../../axiosInstance';
@@ -32,10 +32,25 @@ export function useReserveAppointment(): UseMutateFunction<
 > {
   const { user } = useUser();
   const toast = useCustomToast();
+  const queryClient = useQueryClient();
 
   // useMutation() 캐시와 관련이 없어 쿼리키가 필요 없음
-  const { mutate } = useMutation((appointment: Appointment) =>
-    setAppointmentUser(appointment, user?.id),
+  const { mutate } = useMutation(
+    (appointment: Appointment) => setAppointmentUser(appointment, user?.id),
+    {
+      // queryClient.invalidateQueries : 유효하지 않은(stale) 쿼리 처리
+      // 유효하지 않은 캐시 데이터 무효화
+      // 데이터 업데이트 시, 새로고침 필요 없음
+      // mutate 호출 => mutate의 onSuccess 핸들러가 쿼리 무효화 => 쿼리가 렌더중이면 Refetch 트리거
+      onSuccess: () => {
+        // queryClient.invalidateQueries(무효화할쿼리키)
+        queryClient.invalidateQueries([queryKeys.appointments]);
+        toast({
+          title: '예약이 완료되었습니다!',
+          status: 'success',
+        });
+      },
+    },
   );
   return mutate;
 }
